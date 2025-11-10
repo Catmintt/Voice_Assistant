@@ -1,0 +1,29 @@
+# Web Framework
+fastapi==0.120.2
+uvicorn[standard]
+
+# Configuration
+python-dotenv==1.1.1
+
+# External API Requests
+requests==2.32.5
+
+# DashScope SDK for STT/TTS
+dashscope==1.24.8
+
+# LangChain Core and Community Components
+langchain==0.3.27
+langchain-community==0.3.31
+langchain-core==0.3.78
+
+# Vector Database Connector
+pymilvus==2.6.2
+
+# For BM25 Retriever
+rank-bm25==0.2.2
+
+# Core Dependencies (often required by the above libraries)
+numpy==2.3.3
+pydantic==2.12.0
+PyYAML==6.0.3
+SQLAlchemy==2.0.43 # A dependency for some LangChain components```
