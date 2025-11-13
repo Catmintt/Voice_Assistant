@@ -45,7 +45,7 @@ class Settings:
         # Ollama (Embedding Model) 服务地址
         # 提供了一个默认的本地地址，但仍然推荐在 .env 中显式设置
         # self.OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
-        self.OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://124.72.86.19:11434")
+        self.OLLAMA_BASE_URL: str | None = os.getenv("OLLAMA_BASE_URL")
 
         # --- LangChain 模型配置 ---
         # 使用的大模型名称
