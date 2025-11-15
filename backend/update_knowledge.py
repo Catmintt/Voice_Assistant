@@ -15,7 +15,8 @@ def update_knowledge_base():
     load_dotenv()
     ZILLIZ_URI = os.getenv("ZILLIZ_CLOUD_URI")
     ZILLIZ_TOKEN = os.getenv("ZILLIZ_CLOUD_TOKEN")
-    COLLECTION_NAME = "knowledge_base_collection"
+    # 8b表示使用Qwen3-Embedding-0.6B:Q8_0模型来生成嵌入向量
+    COLLECTION_NAME = "knowledge_base_collection_8b"
     KNOWLEDGE_FILE = "knowledge_re.md"
 
     # --- 2. 连接到 Milvus 并删除旧集合 ---
@@ -60,7 +61,7 @@ def update_knowledge_base():
         OLLAMA_NGROK_URL = settings.OLLAMA_NGROK_URL
         embeddings = OllamaEmbeddings(
             base_url=OLLAMA_NGROK_URL,
-            model=settings.EMBEDDING_MODEL_NAME,
+            model="qwen3-embedding:8b",
         )
         # 发送一个虚拟请求来真实地测试连接
         embeddings.embed_query("test connection")

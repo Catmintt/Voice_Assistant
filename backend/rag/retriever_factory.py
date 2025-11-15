@@ -52,7 +52,7 @@ def create_hybrid_retriever(
         collection_name="knowledge_base_collection",
         connection_args={"uri": zilliz_uri, "token": zilliz_token},
     )
-    vector_retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
+    vector_retriever = vectorstore.as_retriever(search_kwargs={"k": 15})
     logger.info(f"✅ 向量检索器 (Vector Retriever) 初始化完成，每次将检索 {vector_retriever.search_kwargs['k']} 个结果。")
 
     # 步骤 3 & 4: 尝试构建混合检索器，如果失败则降级
@@ -67,7 +67,7 @@ def create_hybrid_retriever(
 
         # 使用 EnsembleRetriever 将 BM25 和向量检索器结合起来
         ensemble_retriever = EnsembleRetriever(
-            retrievers=[bm25_retriever, vector_retriever], weights=[0.5, 0.5]
+            retrievers=[bm25_retriever, vector_retriever], weights=[0.7, 0.3]
         )
         logger.info("✅ 混合检索器 (Ensemble Retriever) 创建成功。")
         base_retriever = ensemble_retriever
