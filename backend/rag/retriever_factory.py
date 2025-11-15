@@ -62,7 +62,7 @@ def create_hybrid_retriever(
         all_docs = vectorstore.similarity_search(query=" ", k=1000) # 不设定关键词，用空查询获取大量文档
         
         bm25_retriever = BM25Retriever.from_documents(all_docs)
-        bm25_retriever.k = 5
+        bm25_retriever.k = 10
         logger.info(f"✅ BM25 检索器初始化完成，每次将检索 {bm25_retriever.k} 个结果。")
 
         # 使用 EnsembleRetriever 将 BM25 和向量检索器结合起来
