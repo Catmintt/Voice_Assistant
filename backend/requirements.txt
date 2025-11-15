@@ -15,6 +15,7 @@ dashscope==1.24.8
 langchain==0.3.27
 langchain-community==0.3.31
 langchain-core==0.3.78
+langchain-siliconflow==0.1.3
 
 # Vector Database Connector
 pymilvus==2.6.2
