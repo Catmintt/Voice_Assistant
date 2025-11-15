@@ -67,7 +67,7 @@ def create_hybrid_retriever(
 
         # 使用 EnsembleRetriever 将 BM25 和向量检索器结合起来
         ensemble_retriever = EnsembleRetriever(
-            retrievers=[bm25_retriever, vector_retriever], weights=[0.7, 0.3]
+            retrievers=[bm25_retriever, vector_retriever], weights=[0.5, 0.5]
         )
         logger.info("✅ 混合检索器 (Ensemble Retriever) 创建成功。")
         base_retriever = ensemble_retriever

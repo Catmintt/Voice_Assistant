@@ -40,7 +40,8 @@ def create_rag_chain(retriever: BaseRetriever, llm: BaseChatModel) -> Runnable:
         "给定一段聊天历史和用户最新的一个问题，"
         "该问题可能引用了聊天历史中的上下文。"
         "你的任务是将这个问题改写成一个独立的、无需聊天历史就能被完全理解的新问题。"
-        "请注意，你不需要回答这个问题，只需要完成改写任务。"
+        "【重要规则】如果用户的问题本身已经是一个独立的、完整的句子，并且不需要参考聊天历史就能理解，那么请【直接原样返回】该问题，不要做任何修改或添加任何额外内容。"
+        "请注意，你的唯一任务是改写或确认问题，绝对不要回答问题。"
     )
     
     contextualize_q_prompt = ChatPromptTemplate.from_messages(
