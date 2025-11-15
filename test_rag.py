@@ -6,6 +6,8 @@ import sys
 from typing import List
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from backend.api.endpoints import get_rag_chain, _llm
 
 # --- 关键导入 ---
 # 导入 RAG 链的“提供者”函数。
@@ -45,42 +47,68 @@ async def main():
 
     print('\n请输入你的问题。输入 "exit" 或 "quit" 退出程序。')
 
+    contextualize_q_system_prompt = (
+        "给定一段聊天历史和用户最新的一个问题，"
+        "该问题可能引用了聊天历史中的上下文。"
+        "你的任务是将这个问题改写成一个独立的、无需聊天历史就能被完全理解的新问题。"
+        "【重要规则】如果用户的问题本身已经是一个独立的、完整的句子，并且不需要参考聊天历史就能理解，那么请【直接原样返回】该问题，不要做任何修改或添加任何额外内容。"
+        "请注意，你的唯一任务是改写或确认问题，绝对不要回答问题。"
+    )
+    contextualize_q_prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", contextualize_q_system_prompt),
+            MessagesPlaceholder("chat_history"),
+            ("human", "{input}"),
+        ]
+    )
+    rewrite_chain = contextualize_q_prompt | _llm
+
     # 3. 进入主循环，接收用户输入
     while True:
         try:
-            # 获取用户在命令行中的输入
             user_question = input("\n👤 你: ")
-
-            # 检查退出命令
             if user_question.lower() in ["exit", "quit"]:
                 print("👋 感谢使用，再见！")
                 break
 
+            # --- 在调用 RAG 链前，先执行并显示问题改写步骤 ---
+            print("\n--- 步骤 1: 问题改写 (History-Aware) ---")
+            rewritten_question = ""
+            if chat_history:
+                # 如果有历史记录，则调用创建的演示链
+                print("检测到对话历史，正在执行问题改写...")
+                rewritten_result = await rewrite_chain.ainvoke({
+                    "input": user_question,
+                    "chat_history": chat_history
+                })
+                rewritten_question = rewritten_result.content
+                print(f"🤖 改写后的独立问题: {rewritten_question}")
+            else:
+                # 如果没有历史记录，则模拟 RAG 链的行为，直接跳过
+                print("对话历史为空，跳过问题改写步骤。")
+                rewritten_question = user_question
+                print(f"🤖 用于检索的问题: {rewritten_question}")
+            # --- 修改结束 ---
+
             print("\n🤖 助手: ...正在思考中...")
 
-            # 4. 【核心】异步调用 RAG 链
-            # 使用 .ainvoke() 方法，因为它是一个异步链。
-            # 传入的字典结构必须和链的期望输入完全一致。
+            # 异步调用 RAG 链
+            # 注意：这里的调用保持不变，它会在内部独立地、再次执行上面的改写逻辑
             result = await rag_chain.ainvoke({
                 "input": user_question,
                 "chat_history": chat_history
             })
             
-            # 从返回结果中提取答案
             answer = result.get("answer", "抱歉，我遇到了一个错误，无法回答。")
-
             print(f"🤖 助手: {answer}")
 
-            # 5. 【重要】更新聊天历史
-            # 将当前的用户问题和模型的回答追加到历史记录中，
-            # 以便下一次提问时，模型能够“记住”之前聊了什么。
+            # 更新聊天历史
             chat_history.extend([
                 HumanMessage(content=user_question),
                 AIMessage(content=answer)
             ])
 
         except KeyboardInterrupt:
-            # 允许用户通过 Ctrl+C 优雅地退出
             print("\n👋 检测到中断，程序退出。")
             break
         except Exception as e:
