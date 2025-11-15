@@ -34,7 +34,7 @@ router = APIRouter(prefix="/ws")
 # 缓存llm和embeddings
 _llm = ChatTongyi(model=settings.LLM_MODEL_NAME, temperature=0.7)
 _embeddings = OllamaEmbeddings(
-    base_url=settings.OLLAMA_BASE_URL, model=settings.EMBEDDING_MODEL_NAME
+    base_url=settings.OLLAMA_NGROK_URL, model=settings.EMBEDDING_MODEL_NAME
 )
 
 # 缓存 retriever

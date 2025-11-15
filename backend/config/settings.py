@@ -51,7 +51,9 @@ class Settings:
         # 使用的大模型名称
         self.LLM_MODEL_NAME: str = "qwen-flash"
         # 嵌入模型的名称
-        self.EMBEDDING_MODEL_NAME: str = "Qwen3-Embedding-8B-Q8_0:latest"
+        self.EMBEDDING_MODEL_NAME: str = "dengcao/Qwen3-Embedding-0.6B:Q8_0"
+        # Ollama Embedding 服务地址
+        self.OLLAMA_NGROK_URL: str | None = os.getenv("OLLAMA_NGROK_URL")
 
         # 执行关键配置的检查
         self._validate_critical_settings()
